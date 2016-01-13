@@ -17,6 +17,7 @@ public class Simulator {
     public static long waitIncr = 10;
     public static long MIN_WAIT_TIME = 10;
     public static long MAX_WAIT_TIME = 200;
+    private boolean paused = false;
 
 
     public Simulator(Grid grid) {
@@ -32,6 +33,15 @@ public class Simulator {
             @Override
             public void run() {
                 while(true) {
+                    while (paused) {
+                        try {
+                            synchronized (this) {
+                                wait();
+                            }
+                        } catch (InterruptedException e) {
+                            view.notifyError(e);
+                        }
+                    }
                     step();
                     try {
                         this.sleep(waitTime);
@@ -73,17 +83,14 @@ public class Simulator {
     }
 
     public void pause() {
-        try {
-            //synchronized (current) {
-                simulationThread.wait();
-            //}
-        } catch (InterruptedException e) {
-            view.notifyError(e);
-        }
+        paused = true;
     }
 
     public void play() {
-        simulationThread.notify();
+        paused = false;
+        synchronized (simulationThread) {
+            simulationThread.notify();
+        }
     }
 
     public void accelerate() {
