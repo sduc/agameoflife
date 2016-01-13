@@ -13,10 +13,18 @@ public class Simulator {
 
     private Thread simulationThread;
 
-    public static long waitTime = 100000;
+    long waitTime = 100;
+    public static long waitIncr = 10;
+    public static long MIN_WAIT_TIME = 10;
+    public static long MAX_WAIT_TIME = 200;
 
-    Simulator(Grid grid) {
+
+    public Simulator(Grid grid) {
         this.current = grid;
+    }
+
+    public void setView(View view) {
+        this.view = view;
     }
 
     private Thread createSimulationThread() {
@@ -26,7 +34,7 @@ public class Simulator {
                 while(true) {
                     step();
                     try {
-                        wait(Simulator.waitTime);
+                        this.sleep(waitTime);
                     } catch (InterruptedException e) {
                         e.printStackTrace();//TODO: remove this
                     }
@@ -40,7 +48,7 @@ public class Simulator {
             Grid next = current.buildNextStateGrid();
             GridDiff change = null;
             try {
-                change = current.getGridDiff();
+                change = next.getGridDiff();
             } catch (NoGridDiffException e) {
                 assert(false);
             }
@@ -53,6 +61,10 @@ public class Simulator {
         synchronized (current) {
             current.toggleCellState(x, y);
         }
+
+        GridDiff diff = new GridDiff();
+        diff.addDiff(x,y);
+        view.notifyGridChanges(diff);
     }
 
     public void start() {
@@ -60,12 +72,28 @@ public class Simulator {
         simulationThread.start();
     }
 
-    public void pause() throws InterruptedException {
-        simulationThread.wait();
+    public void pause() {
+        try {
+            //synchronized (current) {
+                simulationThread.wait();
+            //}
+        } catch (InterruptedException e) {
+            view.notifyError(e);
+        }
     }
 
     public void play() {
         simulationThread.notify();
+    }
+
+    public void accelerate() {
+        if (waitTime > MIN_WAIT_TIME)
+            waitTime -= waitIncr;
+    }
+
+    public void deccelerate() {
+        if (waitTime < MAX_WAIT_TIME)
+            waitTime += waitIncr;
     }
 
 }

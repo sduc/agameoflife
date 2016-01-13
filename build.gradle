@@ -2,6 +2,9 @@ group 'com.github.sduc'
 version '1.0-SNAPSHOT'
 
 apply plugin: 'java'
+apply plugin: 'application'
+
+mainClassName = "com.github.sduc.main.Main"
 
 sourceCompatibility = 1.7
 

@@ -9,17 +9,50 @@ import com.github.sduc.model.Simulator;
 public class Controller {
 
     private Simulator simulator;
+    private SimulatorState state = SimulatorState.INIT;
 
-    void toggleCellState(int x, int y) {
+    public Controller(Simulator simulator) {
+        this.simulator = simulator;
+    }
+
+    public void toggleCellState(int x, int y) {
         simulator.toggleCellState(x, y);
     }
 
-    void startSimulation() {
+    public void startSimulation() {
         simulator.start();
+        state = SimulatorState.RUNNING;
     }
 
-    void pauseSimulation() throws InterruptedException {
+    public void pauseSimulation() {
         simulator.pause();
+        state = SimulatorState.PAUSED;
     }
 
+    public void playSimulation() {
+        simulator.play();
+        state = SimulatorState.RUNNING;
+    }
+
+    public void deccelerate() {
+        simulator.deccelerate();
+    }
+
+    public void accelerate() {
+        simulator.accelerate();
+    }
+
+    public void togglePlayPause() {
+        switch (state) {
+            case INIT:
+                startSimulation();
+                break;
+            case RUNNING:
+                pauseSimulation();
+                break;
+            case PAUSED:
+                playSimulation();
+                break;
+        }
+    }
 }
