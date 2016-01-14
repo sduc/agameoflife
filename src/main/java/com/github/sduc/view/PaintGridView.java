@@ -22,6 +22,7 @@ public class PaintGridView extends JPanel implements GridView, MouseListener {
         this.controller = controller;
         this.grid = new boolean[width][height];
         this.addMouseListener(this);
+        this.setBackground(Color.WHITE);
     }
 
     @Override

@@ -16,7 +16,7 @@ public class ControllerView extends JComponent {
 
     private JButton deccelerate;
     private JButton accelerate;
-    private JButton playPause;
+    private PlayPauseButton playPause;
 
     public ControllerView(Controller controller) {
         this.controller = controller;
@@ -45,17 +45,18 @@ public class ControllerView extends JComponent {
     }
 
     private void initPlayPauseButton() {
-        playPause = new JButton();
+        playPause = new PlayPauseButton();
         playPause.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
+                playPause.toggleIcon();
                 controller.togglePlayPause();
             }
         });
     }
 
     private void initDeccelerateButton() {
-        deccelerate = new JButton();
+        deccelerate = IconButton.buildFastRewindButton();
         deccelerate.addActionListener(new ActionListener(){
 
             @Override
@@ -67,7 +68,7 @@ public class ControllerView extends JComponent {
     }
 
     private void initAccelerateButton() {
-        accelerate = new JButton();
+        accelerate = IconButton.buildFastFowardButton();
         accelerate.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {

@@ -37,7 +37,11 @@ public class View {
     public JFrame getJFrame() {
         JFrame frame = new JFrame();
         frame.setLayout(new BorderLayout());
-        frame.add(gridView.getComponent(), BorderLayout.CENTER);
+
+        JPanel centralPanel = new JPanel();
+        centralPanel.setLayout(new FlowLayout());
+        centralPanel.add(gridView.getComponent());
+        frame.add(centralPanel, BorderLayout.CENTER);
         frame.add(controllerView, BorderLayout.SOUTH);
 
         frame.pack();
